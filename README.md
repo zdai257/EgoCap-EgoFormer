@@ -1,12 +1,18 @@
 EgoCap and EgoFormer: First-Person Image Captioning
 ========
 
-EgoCap is a first sizable dataset that supports end-to-end 1st-person narrative caption learning. It contain 2.1K egocentric images, over 10K captions, and 6.3K contextual
+## EgoCap Dataset ##
+
+EgoCap is a first sizable dataset that supports end-to-end egocentric image captioning. It contain 2.1K egocentric images, over 10K captions, and 6.3K contextual
 label.
 
 The EgoCap dataset can be downloaded from [here](https://drive.google.com/drive/folders/10u8kBlrqi9sFiXZrouP6FChypen4dcFz?usp=sharing).
 
-EgoFormer is a two-stream transformer based network which accomplishes visual-context attention for ego-caption generation. Please cite this work as belew;
+## EgoFormer ##
+
+EgoFormer is a two-stream transformer based deep neural network utilizing visual-contextual attention for image caption generation in 1st-person narrative. EgoFormer accomplishes accurate and human-alike scene understanding with the aid of context encoding. You can run EgoFormer on a Jetson Nano device to let robot explore the uncharted on your behalf. A video demo can be seen **here**.
+
+Please cite our paper as belew;
 
 ```
 @inproceedings{egocap2022,
@@ -35,16 +41,22 @@ Microsoft [COCO-2017](http://cocodataset.org/#download) dataset and EgoCap datas
 
 ## Usage ##
 
-Use **Master** branch for vanilla transformer training, **coca_ctx_vit** for EgoFormer training, and the rest branches for comparative studies.
+Use the following commands context learning, and EgoFormer training;
 
 ```python
 python3 vit_pretrain.py  # Pre-train ViT context encoder, if needed
 python3 main.py
 ```
 
+At deployment stage, e.g., on an NVIDIA Jetson Nano, put the EgoFormer model under root directory and simply run;
+
+```bash
+./egobot_talk.sh
+```
+
 ## Evaluation ##
 
-It is recommended to run the evaluation pipeline through the [notebook](zdData.ipynb). Otherwise, use *predict.py* to generate caption of an arbitrary image, or use APIs in *Eval.py* to conduct quantitative analysis.
+It is recommended to run the evaluation pipeline through the **notebook**. Otherwise, use *predict.py* to generate caption of an arbitrary image, or use APIs in *Eval.py* to conduct quantitative analysis.
 
 Some qualitative analysis results are shown below
 
@@ -56,4 +68,6 @@ Some qualitative analysis results are shown below
 
 ## Acknowledge ##
 
-Cyber Physical Systems, University of Oxford
+Thank the support of the National Institute of Standards and Technology (NIST) in Pervasive, Accurate, and Reliable Location-based Services for Emergency Responders.
+
+Thank Professor Bongjun Choi's team of Dongseo University for helping with data validation.
