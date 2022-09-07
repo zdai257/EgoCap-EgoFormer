@@ -9,6 +9,7 @@ from torchvision.models._utils import IntermediateLayerGetter
 from .ViT_encoder import ViTEncoder
 
 
+# Baseline Transformer
 class Transformer(nn.Module):
 
     def __init__(self, config, d_model=512, nhead=8, num_encoder_layers=6,
@@ -59,6 +60,7 @@ class Transformer(nn.Module):
         return hs
 
 
+# EgoFormer with context word embedding
 class EgoTransformer(Transformer):
     def __init__(self, config, d_model=512, nhead=8, num_encoder_layers=6,
                  num_decoder_layers=6, dim_feedforward=2048, dropout=0.1,
@@ -100,7 +102,7 @@ class EgoTransformer(Transformer):
         return hs
 
 
-# Dual-ViT model
+# Dual-Encoder EgoFormer
 class EgoFormer(Transformer):
     def __init__(self, config, d_model=512, nhead=8, num_encoder_layers=6,
                  num_decoder_layers=6, dim_feedforward=2048, dropout=0.1,

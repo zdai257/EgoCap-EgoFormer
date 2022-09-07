@@ -50,6 +50,7 @@ class EgoCaption(Caption):
         return out
 
 
+# EgoFormer model
 class EgoViT(Caption):
     def __init__(self, backbone, transformer, hidden_dim, vocab_size):
         super().__init__(backbone, transformer, hidden_dim, vocab_size)
@@ -69,7 +70,7 @@ class EgoViT(Caption):
         return out
 
 
-# New Model
+# Separate Encoder & Decoder
 class CaptionWithEncoderDecoder(nn.Module):
     def __init__(self, encoder, decoder, max_position_embeddings, start_token=101, end_token=102, vocab_size=30522):
         super(CaptionWithEncoderDecoder, self).__init__()

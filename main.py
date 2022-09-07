@@ -24,20 +24,13 @@ def main(config):
     np.random.seed(seed)
 
     ### Select Model ###
-    if config.modality == 'image':
-        # Original CATR
-        model, criterion = caption.build_model(config)
-    elif config.modality == 'ego':
+    if config.modality == 'ego':
         # EgoFormer
         model, criterion = caption.build_model_egovit(config)
-        #model, criterion = caption.build_model_ego(config)
-    elif config.modality == 'video':
-        # Video Model
-        model, criterion = caption.build_model_bs(config)
-        # lst = [n for n, p in model.named_parameters() if "backbone" not in n and p.requires_grad]
-        # exit()
-    # Multi-GPU
-    # model = torch.nn.DataParallel(model)
+
+    else:
+        # Baseline Transformer
+        model, criterion = caption.build_model(config)
 
     #print(model); exit()
     #for n, p in model.named_parameters():
@@ -84,9 +77,6 @@ def main(config):
     elif config.modality == 'ego':
         dataset_train = coco.build_dataset_egocap(config, mode='training')
         dataset_val = coco.build_dataset_egocap(config, mode='validation')
-    elif config.modality == 'video':
-        dataset_train = coco.build_dataset_msvd(config, mode='training')
-        dataset_val = coco.build_dataset_msvd(config, mode='validation')
     else:
         raise TypeError("Input Modality not supported!")
     print(f"Train: {len(dataset_train)}")
@@ -106,13 +96,12 @@ def main(config):
 
     # Redefine criterion
     print("Ignored index: ", dataset_val.tokenizer.convert_tokens_to_ids(dataset_val.tokenizer._pad_token))
-    # Define criterion in main?
-    #criterion = torch.nn.CrossEntropyLoss(ignore_index=0)
 
     # Free GPU memory n allow growth
     torch.cuda.empty_cache()
 
     min_loss_val = 100
+    # TODO: update saved checkpoints path
     save_dir = '/mnt/datasets/COCO/epoch_checks'
 
     if not os.path.exists(save_dir):
@@ -149,7 +138,7 @@ def main(config):
     else:
         raise KeyError("Pre-trained context ViT not found!")
 
-    # Load captioner from pre-trained COCO
+    # Load (visual encoder + decoder) from pre-trained COCO
     if config.IsFinetune:
         # Load state_dict of pretrained model
         if os.path.exists(config.pretrain_checkpoint):

@@ -75,22 +75,7 @@ def evaluate(config, model, criterion, data_loader, device):
                 outputs = model(samples, caps[:, :-1], cap_masks[:, :-1], img_tensor)
             else:
                 outputs = model(samples, caps[:, :-1], cap_masks[:, :-1])
-            '''
-            # Derive Cider Score
-            start_token = tokenizer.convert_tokens_to_ids(tokenizer._cls_token)
-            cap_pred, _ = create_caption_and_mask(start_token, config.max_position_embeddings)
-            for i in range(config.max_position_embeddings - 1):
-                predictions = outputs[:, i, :]
-                predicted_id = torch.argmax(predictions, axis=-1)
-                if predicted_id[0] == 102:
-                    break
-                cap_pred[:, i + 1] = predicted_id[0]
 
-            result = tokenizer.decode(cap_pred[0].tolist(), skip_special_tokens=True)
-            #print('\n' + result.capitalize() + '\n')
-            sample_dict = {len(cap_dict): [result]}
-            cap_dict.update(sample_dict)
-            '''
             loss = criterion(outputs.permute(0, 2, 1), caps[:, 1:])
 
             validation_loss += loss.item()

@@ -68,78 +68,6 @@ val_transform = tv.transforms.Compose([
 ])
 
 
-def read_msvd(msvd_ana_file, skipped_dir, min_frame_per_clip=7, window_frame_per_clip=5):
-    pairs, Anns_train, Anns_test = [], [], []
-    # Host Dict that contains {imgname: (list(path_to_frames), list(sentence_anns))}
-    vid_anns = {}
-
-    assert window_frame_per_clip <= min_frame_per_clip
-
-    with open(msvd_ana_file, "r") as file:
-        lines = file.readlines()
-        print("Num of lines = ", len(lines))
-        for line in lines:
-            if line != "\n" and line[0] != "#":
-                pairs.append(line)
-
-    for pair in pairs:
-        img_name = pair.split(' ')[0]
-        sent_ana = pair[len(img_name) + 1:-1]
-
-        if img_name not in vid_anns:
-            # Create a list of [path_to_image]
-            img_keys = []
-            # Discard clip with less than N frames
-            if len(os.listdir(join(skipped_dir, img_name))) < min_frame_per_clip:
-                continue
-
-            for frame in sorted(os.listdir(join(skipped_dir, img_name)), key=lambda x: int(x.split('.')[0][6:])):
-                img_keys.append(join(skipped_dir, img_name, frame))
-
-            vid_anns[img_name] = (img_keys, [sent_ana])
-        else:
-            if sent_ana in vid_anns[img_name][1]:
-                continue
-            vid_anns[img_name][1].append(sent_ana)
-
-    # vid_anns is a dict of {'vid_name': (['img1.jpg', 'img2.jpg' ...], ['cap1', 'cap2' ...]), ... ...}
-    # print(next(iter(vid_anns)))
-    X_train, X_test = train_test_split(list(vid_anns.keys()), test_size=0.3, random_state=42, shuffle=True)
-
-    for idx, (key, val) in enumerate(vid_anns.items()):
-        #for index in range(len(val[1])):
-        if skipped_dir.split('/')[-1] == 'skipped':
-            for i in range(len(val[0]) - window_frame_per_clip + 1):
-                # Exhaustive ann sample or not
-                #tuple_item = (val[0][i:i + window_frame_per_clip], val[1][index])
-                tuple_item = (val[0][i:i + window_frame_per_clip], random.choice(val[1]))
-
-                # Split vid_anns based on whether vid_name in X_train/X_test lists
-                if key in X_train:
-                    Anns_train.append(tuple_item)
-                elif key in X_test:
-                    Anns_test.append(tuple_item)
-
-                # Break to avoid sample too many from long clips
-                if i > 15:
-                    break
-
-        elif skipped_dir.split('/')[-1] == 'skip64':
-            for index in range(len(val[1])):
-                tuple_item = (val[0], val[1][index])
-                if key in X_train:
-                    Anns_train.append(tuple_item)
-                elif key in X_test:
-                    Anns_test.append(tuple_item)
-                # Break to avoid sample too many from long clips
-                if index > 20:
-                    break
-        else:
-            raise ValueError("Sampling sub dir not found!")
-
-    return Anns_train, Anns_test
-
-
 def read_deepdiary(dirname, filename):
     with open(filename, "r") as file:
         pairs_str = file.read()
@@ -201,54 +129,6 @@ class DeepDiary(Dataset):
         cap_mask = (1 - np.array(caption_encoded['attention_mask'])).astype(bool)
 
         return image.tensors.squeeze(0), image.mask.squeeze(0), caption, cap_mask
-
-
-class MSVDCaption(Dataset):
-    def __init__(self, root, vid_ann, max_length, limit, transform=train_transform_msvd, mode='training',
-                 frame_per_clip=5):
-        super().__init__()
-        self.root = root
-        self.transform = transform
-
-        # self.annot is a list of tuple (['frame0.jpg', 'frame1.jpg' ...], ["A man is sitting", "An old man", ...])
-        if mode == 'training':
-            self.annot = vid_ann
-        elif mode == 'validation':
-            self.annot = vid_ann
-        else:
-            raise ValueError("MSVD does not support this mode.")
-
-        self.tokenizer = BertTokenizer.from_pretrained(
-            'bert-base-uncased', do_lower=True, local_files_only=True)
-        self.max_length = max_length + 1
-
-    def __len__(self):
-        return len(self.annot)
-
-    def __getitem__(self, idx):
-        image_lst, caption = self.annot[idx]
-        images = []
-        for img_path in image_lst:
-            image = Image.open(img_path)
-            if self.transform:
-                image = self.transform(image)
-            #image = nested_tensor_from_tensor_list(image.unsqueeze(0))
-            images.append(image.unsqueeze(3))
-
-        #print(Split1[0].shape, Split1[-1].shape)
-        tensor_images = torch.cat(images, dim=3)
-        #print("After cat shape = ", tensor_images.shape)
-        nest_images = nested_tensor_from_tensor_list(tensor_images.unsqueeze(0))
-
-        #print(caption)
-        caption_encoded = self.tokenizer.encode_plus(
-            caption, max_length=self.max_length, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True)
-        # caption_encoded is a dict of {'input_ids': <a list of vocab indexes>, 'attention_mask': [1, 1, 1, 0 ,0 ...]
-        #print(caption_encoded)
-        caption = np.array(caption_encoded['input_ids'])
-        cap_mask = (1 - np.array(caption_encoded['attention_mask'])).astype(bool)
-
-        return nest_images.tensors.squeeze(0), nest_images.mask.squeeze(0), caption, cap_mask
 
 
 class EgoCaption(Dataset):
@@ -427,6 +307,7 @@ def build_dataset(config, mode='training'):
     else:
         raise NotImplementedError(f"{mode} not supported")
 
+
 def build_dataset_deepdiary(config, mode='deepdiary'):
     data_dir = join(config.dir, 'amt_data')
     data_file = join(data_dir, 'amt_list.txt')
@@ -434,40 +315,6 @@ def build_dataset_deepdiary(config, mode='deepdiary'):
     data = DeepDiary(data_dir, anns, max_length=config.max_position_embeddings,
                      limit=config.limit, transform=val_transform, mode=mode)
     return data
-
-def build_dataset_msvd(config, mode='training'):
-    msvd_data_dir = config.msvd_data_dir
-    msvd_ana_file = join(msvd_data_dir, 'AllVideoDescriptions.txt')
-    skipped_dir = join(msvd_data_dir, config.msvd_sub_dir)
-
-    train_file = 'msvd_skip-{}_train_min-{}_win-{}.pickle'.format(1, config.min_frame_per_clip, config.frame_per_clip)
-    test_file = 'msvd_skip-{}_test_min-{}_win-{}.pickle'.format(1, config.min_frame_per_clip, config.frame_per_clip)
-    if os.path.exists(train_file) and os.path.exists(test_file):
-        print("Loading existing .pickle of splitted Train/Val MSVD datasets!")
-        with open(train_file, 'rb') as f:
-            anns_train = pickle.load(f)
-        with open(test_file, 'rb') as f:
-            anns_test = pickle.load(f)
-    else:
-        anns_train, anns_test = read_msvd(msvd_ana_file, skipped_dir, min_frame_per_clip=config.min_frame_per_clip,
-                                          window_frame_per_clip=config.frame_per_clip)
-        with open(train_file, 'wb') as f:
-            pickle.dump(anns_train, f)
-        with open(test_file, 'wb') as f:
-            pickle.dump(anns_test, f)
-
-    if mode == 'training':
-        data = MSVDCaption(msvd_data_dir, anns_train, max_length=config.max_position_embeddings,
-                           limit=config.limit, transform=train_transform_msvd, mode=mode,
-                           frame_per_clip=config.frame_per_clip)
-        return data
-    elif mode == 'validation':
-        data = MSVDCaption(msvd_data_dir, anns_test, max_length=config.max_position_embeddings,
-                           limit=config.limit, transform=val_transform, mode=mode,
-                           frame_per_clip=config.frame_per_clip)
-        return data
-    else:
-        raise NotImplementedError(f"{mode} not supported")
 
 
 def build_dataset_egocap(config, mode='training'):

@@ -43,32 +43,7 @@ def create_tag_token_and_mask(tokenizer_t, tags=('na', 'na')):
     return tag_token_template.unsqueeze(0), tag_mask_template.unsqueeze(0)
 
 
-'''
-def calc_scores(ref, hypo):
-    """
-    ref, dictionary of reference sentences (id, sentence)
-    hypo, dictionary of hypothesis sentences (id, sentence)
-    score, dictionary of scores
-    """
-    scorers = [
-        (Bleu(4), ["Bleu_1", "Bleu_2", "Bleu_3", "Bleu_4"]),
-        (Meteor(), "METEOR"),
-        (Rouge(), "ROUGE_L"),
-        (Cider(), "CIDEr"),
-        (Spice(), "SPICE")
-    ]
-    final_scores = {}
-    for scorer, method in scorers:
-        score, scores = scorer.compute_score(ref, hypo)
-        if type(score) == list:
-            for m, s in zip(method, score):
-                final_scores[m] = s
-        else:
-            final_scores[method] = score
-    return final_scores
-'''
-
-
+# sample_path: Evaluate a sample image or a folder of images for quantitative analysis
 def predict_qualitative(config, sample_path, tags, checkpoint_path=None, map_location='cpu'):
 
     if checkpoint_path is None:
