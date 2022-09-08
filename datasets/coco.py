@@ -279,7 +279,7 @@ class EgoCO(Dataset):
         return len(self.annot)
 
     def __getitem__(self, idx):
-        image_id, split_index, caption, tags = self.annot[idx]
+        image_id, caption = self.annot[idx]
         image = Image.open(os.path.join(self.root, image_id))
         # Context ViT input
         inputs = self.feature_extractor(image, return_tensors="pt")
@@ -294,7 +294,7 @@ class EgoCO(Dataset):
         cap_mask = (1 - np.array(caption_encoded['attention_mask'])).astype(bool)
 
         # Tags: popping in Decoder
-        tags_encoded = self.tokenizer.encode_plus(self.where_dict[tags[0]] + ' ' + self.when_dict[tags[1]],
+        tags_encoded = self.tokenizer.encode_plus(' ',
                                                   max_length=10, pad_to_max_length=True, return_attention_mask=True,
                                                   return_token_type_ids=False, truncation=True)
         tag_token = np.array(tags_encoded['input_ids'])
