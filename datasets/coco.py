@@ -261,9 +261,9 @@ class EgoCO(Dataset):
                       for val in ann['annotations']]
         # self.annot is a list of tuples [('imgname.jpg', split_index, 'I am doing.', (<where>, <when>))...]
         if mode == 'validation':
-            self.annot = ann
+            self.annot = self.annot
         if mode == 'training':
-            self.annot = ann[: limit]
+            self.annot = self.annot[: limit]
 
         self.where_dict = {'indoor': "in indoor inside room", 'outdoor': "out outside outdoor outdoors", 'na': ""}
         self.when_dict = {'daytime': "day daytime sunny midday", 'night': "night nighttime midnight evening", 'na': ""}
