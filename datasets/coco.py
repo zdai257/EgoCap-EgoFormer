@@ -384,7 +384,7 @@ def build_dataset_egoco(config, mode='training'):
         train_file = os.path.join(
             config.dir, 'annotations', 'captions_train2017.json')
         data = EgoCO(train_dir, read_json(
-            train_file), max_length=config.max_position_embeddings, limit=config.limit, transform=train_transform, mode=mode)
+            train_file), max_length=config.max_position_embeddings, limit=config.limit, transform=val_transform, mode=mode)
         return data
 
     elif mode == 'validation':
