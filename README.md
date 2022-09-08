@@ -6,11 +6,11 @@ EgoCap and EgoFormer: First-Person Image Captioning
 EgoCap is a first sizable dataset that supports end-to-end egocentric image captioning. It contain 2.1K egocentric images, over 10K captions, and 6.3K contextual
 label.
 
-The EgoCap dataset can be downloaded from [here](https://drive.google.com/drive/folders/10u8kBlrqi9sFiXZrouP6FChypen4dcFz?usp=sharing).
+The EgoCap dataset can be downloaded from *public drive* if you contact z.dai1@aston.ac.uk for access. Please state your name, affiliation, and purpose of use in the email.
 
 ## EgoFormer ##
 
-EgoFormer is a two-stream transformer based deep neural network utilizing visual-contextual attention for image caption generation in 1st-person narrative. EgoFormer accomplishes accurate and human-alike scene understanding with the aid of context encoding. You can run EgoFormer on a Jetson Nano device to let robot explore the uncharted on your behalf. A video demo can be seen **here**.
+EgoFormer is a two-stream transformer based deep neural network utilizing visual-contextual attention for image caption generation in 1st-person narrative. EgoFormer accomplishes accurate and human-alike scene understanding with the aid of context encoding. You can run EgoFormer on a Jetson Nano device to let robot explore the uncharted on your behalf. A video demo can be seen **here**. A blog can be found **here**.
 
 Please cite our paper as belew;
 
@@ -26,14 +26,12 @@ title = {EgoCap and EgoFormer: First-Person Image Captioning with Context Fusion
 }
 ```
 
-This repository implements the training and evaluation of EgoFormer. It is modified based on repository [CATR](https://github.com/saahiluppal/catr).
-
 ## Prerequisites ##
 
 * Python 3.7
 * Pytorch 1.7
 * torchvision 0.8.2
-* transformers 4.12.5
+* transformers 4.12
 * pycocoevalcap
 * sklearn
 
@@ -41,10 +39,17 @@ Microsoft [COCO-2017](http://cocodataset.org/#download) dataset and EgoCap datas
 
 ## Usage ##
 
-Use the following commands context learning, and EgoFormer training;
+This repository implements the training and evaluation of EgoFormer. It is modified based on repository [CATR](https://github.com/saahiluppal/catr).
+
+Make sure you train the baseline with COCO first. Then use the following command for context learning;
 
 ```python
-python3 vit_pretrain.py  # Pre-train ViT context encoder, if needed
+python3 vit_pretrain.py  # Pre-train ViT context encoder
+```
+
+Finally use the following command to train EgoFormer;
+
+```python
 python3 main.py
 ```
 
@@ -56,9 +61,9 @@ At deployment stage, e.g., on an NVIDIA Jetson Nano, put the EgoFormer model und
 
 ## Evaluation ##
 
-It is recommended to run the evaluation pipeline through the **notebook**. Otherwise, use *predict.py* to generate caption of an arbitrary image, or use APIs in *Eval.py* to conduct quantitative analysis.
+It is recommended to run the evaluation pipeline through the **notebook**. Otherwise, use **predict_qualitative** in *Eval.py* to generate caption of an image, or conduct quantitative analysis on a folder of images.
 
-Some qualitative analysis results are shown below
+Some EgoFormer caption results in comparison to baseline transformer and ground truth are shown below
 
 <p align="center">
   <img src="Qualitative_samples/fjDvKHkmxs0_119_126.avi00001.jpg" />
@@ -68,6 +73,6 @@ Some qualitative analysis results are shown below
 
 ## Acknowledge ##
 
-Thank the support of the National Institute of Standards and Technology (NIST) in Pervasive, Accurate, and Reliable Location-based Services for Emergency Responders.
+We thank the support of the National Institute of Standards and Technology (NIST) in project: Pervasive, Accurate, and Reliable Location-based Services for Emergency Responders.
 
-Thank Professor Bongjun Choi's team of Dongseo University for helping with data validation.
+We thank Professor Bongjun Choi's team of Dongseo University for helping with data validation.
