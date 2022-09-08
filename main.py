@@ -119,7 +119,11 @@ def main(config):
         print("Current checkpoint epoch = %d" % checkpoint['epoch'])
     '''
     # Load from context ViT
-    if os.path.exists(config.pretrain_ctx_vit):
+    if config.IsBlindEgoco:
+        print("Skipping pretrained context ViT param loading...")
+        pass
+
+    elif os.path.exists(config.pretrain_ctx_vit):
         print("Loading Context ViT Encoder...")
         pretrained_vit = torch.load(config.pretrain_ctx_vit, map_location='cpu')
         pretrained_vit_dict = pretrained_vit['model']
