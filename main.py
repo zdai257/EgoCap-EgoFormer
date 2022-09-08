@@ -75,8 +75,12 @@ def main(config):
         dataset_train = coco.build_dataset(config, mode='training')
         dataset_val = coco.build_dataset(config, mode='validation')
     elif config.modality == 'ego':
-        dataset_train = coco.build_dataset_egocap(config, mode='training')
-        dataset_val = coco.build_dataset_egocap(config, mode='validation')
+        if config.IsBlindEgoco:
+            dataset_train = coco.build_dataset_egoco(config, mode='training')
+            dataset_val = coco.build_dataset_egoco(config, mode='validation')
+        else:
+            dataset_train = coco.build_dataset_egocap(config, mode='training')
+            dataset_val = coco.build_dataset_egocap(config, mode='validation')
     else:
         raise TypeError("Input Modality not supported!")
     print(f"Train: {len(dataset_train)}")

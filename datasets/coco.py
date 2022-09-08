@@ -178,6 +178,61 @@ class EgoCaption(Dataset):
         return image.tensors.squeeze(0), image.mask.squeeze(0), caption, cap_mask, tag_token, tag_mask
 
 
+class EgoCO(Dataset):
+    def __init__(self, root, ann, max_length, limit, transform=train_transform, mode='training'):
+        super().__init__()
+        self.root = root
+        self.transform = transform
+        root_dir = os.path.dirname(os.path.abspath(__file__))
+        if os.path.exists(join(root_dir, "vit_classify-feature_extractor")):
+            self.feature_extractor = ViTFeatureExtractor.from_pretrained(join(root_dir, "vit_classify-feature_extractor"))
+        else:
+            self.feature_extractor = ViTFeatureExtractor.from_pretrained("google/vit-base-patch16-224")
+            self.feature_extractor.save_pretrained(join(root_dir, "vit_classify-feature_extractor"))
+
+        # self.annot is a list of tuples [('imgname.jpg', split_index, 'I am doing.', (<where>, <when>))...]
+        if mode == 'validation':
+            self.annot = ann
+        if mode == 'training':
+            self.annot = ann
+
+        self.where_dict = {'indoor': "in indoor inside room", 'outdoor': "out outside outdoor outdoors", 'na': ""}
+        self.when_dict = {'daytime': "day daytime sunny midday", 'night': "night nighttime midnight evening", 'na': ""}
+
+        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower=True, local_files_only=True)
+        self.max_length = max_length + 1
+
+    def __len__(self):
+        return len(self.annot)
+
+    def __getitem__(self, idx):
+        image_id, split_index, caption, tags = self.annot[idx]
+        image = Image.open(os.path.join(self.root, 'static', 'Split' + split_index, image_id))
+        # Context ViT input
+        inputs = self.feature_extractor(image, return_tensors="pt")
+        if self.transform:
+            image = self.transform(image)
+        image = nested_tensor_from_tensor_list(image.unsqueeze(0))
+
+        caption_encoded = self.tokenizer.encode_plus(
+            caption, max_length=self.max_length, pad_to_max_length=True, return_attention_mask=True, return_token_type_ids=False, truncation=True)
+        # caption_encoded is a dict of {'input_ids': <a list of vocab indexes>, 'attention_mask': [1, 1, 1, 0 ,0 ...]
+        caption = np.array(caption_encoded['input_ids'])
+        cap_mask = (1 - np.array(caption_encoded['attention_mask'])).astype(bool)
+
+        # Tags: popping in Decoder
+        tags_encoded = self.tokenizer.encode_plus(self.where_dict[tags[0]] + ' ' + self.when_dict[tags[1]],
+                                                  max_length=10, pad_to_max_length=True, return_attention_mask=True,
+                                                  return_token_type_ids=False, truncation=True)
+        tag_token = np.array(tags_encoded['input_ids'])
+        tag_mask = (1 - np.array(tags_encoded['attention_mask'])).astype(bool)
+        # Disable attention to [CLS] or [SEP]
+        tag_mask[0] = True
+        tag_mask[-1] = True
+
+        return image.tensors.squeeze(0), image.mask.squeeze(0), caption, cap_mask, tag_token, tag_mask, inputs
+
+
 class EgoCapViT(Dataset):
     def __init__(self, root, ann, max_length, limit, transform=train_transform, mode='training'):
         super().__init__()
@@ -315,6 +370,27 @@ def build_dataset_deepdiary(config, mode='deepdiary'):
     data = DeepDiary(data_dir, anns, max_length=config.max_position_embeddings,
                      limit=config.limit, transform=val_transform, mode=mode)
     return data
+
+
+def build_dataset_egoco(config, mode='training'):
+    if mode == 'training':
+        train_dir = os.path.join(config.dir, 'train2017')
+        train_file = os.path.join(
+            config.dir, 'annotations', 'captions_train2017.json')
+        data = EgoCapViT(train_dir, read_json(
+            train_file), max_length=config.max_position_embeddings, limit=config.limit, transform=train_transform, mode=mode)
+        return data
+
+    elif mode == 'validation':
+        val_dir = os.path.join(config.dir, 'val2017')
+        val_file = os.path.join(
+            config.dir, 'annotations', 'captions_val2017.json')
+        data = EgoCapViT(val_dir, read_json(
+            val_file), max_length=config.max_position_embeddings, limit=config.limit, transform=val_transform, mode=mode)
+        return data
+
+    else:
+        raise NotImplementedError(f"{mode} not supported")
 
 
 def build_dataset_egocap(config, mode='training'):
