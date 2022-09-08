@@ -383,7 +383,7 @@ def build_dataset_egoco(config, mode='training'):
         train_dir = os.path.join(config.dir, 'train2017')
         train_file = os.path.join(
             config.dir, 'annotations', 'captions_train2017.json')
-        data = EgoCapViT(train_dir, read_json(
+        data = EgoCO(train_dir, read_json(
             train_file), max_length=config.max_position_embeddings, limit=config.limit, transform=train_transform, mode=mode)
         return data
 
@@ -391,7 +391,7 @@ def build_dataset_egoco(config, mode='training'):
         val_dir = os.path.join(config.dir, 'val2017')
         val_file = os.path.join(
             config.dir, 'annotations', 'captions_val2017.json')
-        data = EgoCapViT(val_dir, read_json(
+        data = EgoCO(val_dir, read_json(
             val_file), max_length=config.max_position_embeddings, limit=config.limit, transform=val_transform, mode=mode)
         return data
 
