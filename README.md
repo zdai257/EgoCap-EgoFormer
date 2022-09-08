@@ -41,13 +41,13 @@ Microsoft [COCO-2017](http://cocodataset.org/#download) dataset and EgoCap datas
 
 This repository implements the training and evaluation of EgoFormer. It is modified based on repository [CATR](https://github.com/saahiluppal/catr).
 
-Make sure you train the baseline with COCO first. Then use the following command for context learning;
+Make sure you train the baseline with COCO first (configure **modality** as "image"). Then use the following command for context learning;
 
 ```python
 python3 vit_pretrain.py  # Pre-train ViT context encoder
 ```
 
-Finally use the following command to train EgoFormer;
+Finally use the following command to train EgoFormer with updated link to converged context ViT model;
 
 ```python
 python3 main.py
@@ -61,13 +61,13 @@ At deployment stage, e.g., on an NVIDIA Jetson Nano, put the EgoFormer model und
 
 ## Evaluation ##
 
-It is recommended to run the evaluation pipeline through the **notebook**. Otherwise, use **predict_qualitative** in *Eval.py* to generate caption of an image, or conduct quantitative analysis on a folder of images.
+It is recommended to run the evaluation pipeline through the **here**. Otherwise, use **predict_qualitative()** in *Eval.py* to generate caption of an image, or conduct quantitative analysis on a directory of images.
 
-Some EgoFormer caption results in comparison to baseline transformer and ground truth are shown below
+Some EgoFormer caption results in comparison to baseline transformer are shown below
 
 <p align="center">
   <img src="Qualitative_samples/fjDvKHkmxs0_119_126.avi00001.jpg" />
-  <img src="Qualitative_samples/0ee70fb4-ac6d-4da8-80e6-f5a94834eb10_small.jpg" />
+  <img src="Qualitative_samples/0ebffd92-5fa8-4dd4-9349-b45b785d720e_small.jpg" />
   <img src="Qualitative_samples/0f4e630b-e834-4ff4-9418-ccfdbdc4ee37_small.jpg" />
 </p>
 

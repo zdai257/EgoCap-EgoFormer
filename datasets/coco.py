@@ -281,6 +281,9 @@ class EgoCO(Dataset):
     def __getitem__(self, idx):
         image_id, caption = self.annot[idx]
         image = Image.open(os.path.join(self.root, image_id))
+        # fixed: Non-3-channel images bring error
+        if image.mode != 'RGB':
+            image = image.convert("RGB")
         # Context ViT input
         inputs = self.feature_extractor(image, return_tensors="pt")
         if self.transform:
@@ -422,7 +425,7 @@ def build_dataset_egocap(config, mode='training'):
 
     if mode == 'training':
         data = EgoCapViT(egocap_data_dir, egocap_train, max_length=config.max_position_embeddings,
-                          limit=config.limit, transform=val_transform, mode=mode)
+                          limit=config.limit, transform=train_transform, mode=mode)
         return data
     elif mode == 'validation':
         data = EgoCapViT(egocap_data_dir, egocap_val, max_length=config.max_position_embeddings,
