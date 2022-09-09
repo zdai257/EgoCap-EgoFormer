@@ -53,8 +53,8 @@ def main():
         elapsed_t = time.time() - start_t
         print("Word %d onnx sess time = %.04f seconds" % (i, elapsed_t))
 
-        pred = pred[:, i, :]
-        predicted_id = np.argmax(pred, axis=-1)
+        prediction = pred[0][:, i, :]
+        predicted_id = np.argmax(prediction, axis=-1)
 
         # End of Sentence
         if predicted_id[0] == 102:

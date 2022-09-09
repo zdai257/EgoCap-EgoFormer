@@ -53,10 +53,10 @@ Finally use the following command to train EgoFormer with updated link to conver
 python3 main.py
 ```
 
-At deployment stage, e.g., on an NVIDIA Jetson Nano, put the EgoFormer model under root directory and simply run;
+At deployment stage, e.g., on an NVIDIA Jetson Nano, run inference model (e.g., in ONNX) by;
 
-```bash
-./egobot_talk.sh
+```python
+python3 egobot_talk.py
 ```
 
 ## Evaluation ##
