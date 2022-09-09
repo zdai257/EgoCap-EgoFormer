@@ -147,4 +147,4 @@ WordEmbeddings/
 *.pickle
 .DS_Store
 vit*/
-
+*.onnx
