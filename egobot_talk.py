@@ -6,6 +6,38 @@ import onnxruntime as rt
 import statistics
 import time
 from transformers import BertTokenizer
+from PIL import Image, ImageOps
+
+
+def get_image(path=None):
+    # Load Image
+    image = Image.open(path)
+    # Transpose with respect to EXIF data
+    image = ImageOps.exif_transpose(image)
+    w, h = image.size
+    print("PIL Image width: {}, height: {}".format(w, h))
+
+    # transforms
+    image = under_max(image)
+
+    return np.asarray(image, dtype=np.float32)
+
+
+MAX_DIM = 299
+
+
+def under_max(image):
+    if image.mode != 'RGB':
+        image = image.convert("RGB")
+
+    shape = np.array(image.size, dtype=np.float)
+    long_dim = max(shape)
+    scale = MAX_DIM / long_dim
+
+    new_shape = (shape * scale).astype(int)
+    image = image.resize(new_shape)
+
+    return image
 
 
 def create_caption_and_mask(start_t, max_length):
@@ -20,6 +52,8 @@ def create_caption_and_mask(start_t, max_length):
 
 def main():
     ego_model = "./BaseFormer.onnx"
+
+    sample_path = "./Qualitative_samples/origin/fjDvKHkmxs0_119_126.avi00001.jpg"
 
     sess = rt.InferenceSession(ego_model, None)
 
@@ -39,7 +73,8 @@ def main():
 
     # Input formatting
     x = list()
-    x.append(np.expand_dims(np.random.rand(3, 224, 224).astype(np.float32), axis=0))
+    #x.append(np.expand_dims(np.random.rand(3, 224, 224).astype(np.float32), axis=0))
+    x.append(np.expand_dims(get_image(sample_path), axis=0))
     x.append(cap)
     x.append(cap_mask)
 
