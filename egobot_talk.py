@@ -20,8 +20,11 @@ def get_image(path=None):
     # transforms
     image = under_max(image)
 
-    return np.asarray(image, dtype=np.float32)
-
+    img = np.array(image, dtype=np.float32).transpose(2, 0, 1)
+    for c in range(3):
+        img[c] = (img[c] - np.mean(img[c])) / np.std(img[c])
+    print(img)
+    return img
 
 MAX_DIM = 299
 
@@ -35,6 +38,8 @@ def under_max(image):
     scale = MAX_DIM / long_dim
 
     new_shape = (shape * scale).astype(int)
+    # force shape 224, 224
+    new_shape = (224, 224)
     image = image.resize(new_shape)
 
     return image
@@ -79,7 +84,7 @@ def main():
     x.append(cap_mask)
 
     for i in range(128 - 1):
-
+        print(x)
         x = x if isinstance(x, list) else [x]
         inputs = dict([(item.name, x[n]) for n, item in enumerate(sess.get_inputs())])
 
@@ -90,7 +95,7 @@ def main():
 
         prediction = pred[0][:, i, :]
         predicted_id = np.argmax(prediction, axis=-1)
-
+        print(predicted_id)
         # End of Sentence
         if predicted_id[0] == 102:
             break
