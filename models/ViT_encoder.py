@@ -9,7 +9,7 @@ from transformers import ViTModel, ViTConfig, ViTFeatureExtractor, ViTModel, ViT
 
 class ViTEncoder(nn.Module):
 
-    def __init__(self, hidden_dim=256):
+    def __init__(self, hidden_dim=256, IsBackboneWithGrad=True):
         super().__init__()
         root_dir = os.path.dirname(os.path.abspath(__file__))
         if os.path.exists(join(root_dir, "vit_classify-base-patch16-224")):
@@ -21,9 +21,11 @@ class ViTEncoder(nn.Module):
         #for k, v in backbone.named_parameters():
         #    print(k, v.shape)
 
+        self.IsBackboneWithGrad = IsBackboneWithGrad
+
         for name, parameter in backbone.named_parameters():
             if 1:
-                parameter.requires_grad_(True)
+                parameter.requires_grad_(self.IsBackboneWithGrad)
 
         return_layers = {'vit': 'vit2'}
         self.body = IntermediateLayerGetter(backbone, return_layers=return_layers)
@@ -71,7 +73,12 @@ class ViTEncoder(nn.Module):
 
 
 def build_ViTEncoder(config):
-    vit = ViTEncoder(hidden_dim=config.hidden_dim)
+    if config.IsBlindEgoco and config.lr_ctx_vit==0:
+        IsBackboneWithGrad = False
+    else:
+        IsBackboneWithGrad = True
+
+    vit = ViTEncoder(hidden_dim=config.hidden_dim, IsBackboneWithGrad=IsBackboneWithGrad)
     #print(vit)
     #exit()
     return vit

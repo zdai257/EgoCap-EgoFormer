@@ -123,7 +123,7 @@ def main(config):
         print("Current checkpoint epoch = %d" % checkpoint['epoch'])
     '''
     # Load from context ViT
-    if config.IsBlindEgoco:
+    if config.IsBlindEgoco and not os.path.exists(config.pretrain_ctx_vit):
         print("Skipping pretrained context ViT param loading...")
         pass
 

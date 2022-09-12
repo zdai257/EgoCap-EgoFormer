@@ -178,7 +178,8 @@ def main(config):
                                  drop_last=False, num_workers=config.num_workers)
 
     # Free GPU memory n allow growth
-    torch.cuda.empty_cache()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
     save_dir = '/mnt/datasets/COCO/vit_checks'
     if not os.path.exists(save_dir):
@@ -202,7 +203,8 @@ def main(config):
         if best_acc < avg_acc:
             best_acc = avg_acc
             print('Saving model ...')
-            model_name = 'ctx_vit-accwhere{}_accwhen{}_accwhom{}.pth'.format(
+            model_name = '{}-accwhere{}_accwhen{}_accwhom{}.pth'.format(
+                config.pretrain_ctx_vit.split('/')[-1].split('.')[0],
                 round(acc_where * 100),
                 round(acc_when * 100),
                 round(acc_whom * 100)

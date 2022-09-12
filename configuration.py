@@ -50,12 +50,12 @@ class ConfigEgo(object):
         # Learning Rates
         self.lr_backbone = 0e-5
         self.lr = 1e-5
-        self.lr_ctx_vit = 1e-6
+        self.lr_ctx_vit = 0.  #1e-6
 
         # Epochs
         self.epochs = 80
         self.lr_drop = 20
-        self.start_epoch = 12  # Finetune starting from 11 + 1
+        self.start_epoch = 0  #12  # Finetune starting from 11 + 1
         self.weight_decay = 1e-4
         # Warm Up: steps / (batch * epochs)
         self.warmup_steps = 24
@@ -70,7 +70,7 @@ class ConfigEgo(object):
         self.seed = 42
         self.batch_size = 8
         self.num_workers = 8
-        self.checkpoint = './EgoFormer.pth'
+        self.checkpoint = './EgoCO_raw.pth'
         self.clip_max_norm = 0.1
 
         # Transformer
@@ -109,5 +109,5 @@ class ConfigEgo(object):
         self.vit_weights = (0.9, 0.69, 0.49)
         self.IsBlindEgoco = True
         # TODO: specify pretrained context ViT classifier path
-        self.pretrain_ctx_vit = "./vit_checks/prob_equalloss32-accwhere96_accwhen51_accwhom66.pth"
+        self.pretrain_ctx_vit = "./ctx_vit_raw.pth"
 
