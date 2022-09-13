@@ -2,11 +2,42 @@ import os
 from os.path import join
 import sys
 import numpy as np
+import onnx
 import onnxruntime as rt
 import statistics
 import time
 from transformers import BertTokenizer
 from PIL import Image, ImageOps
+import torchvision as tv
+
+from datasets import coco
+from Eval import create_caption_and_mask
+
+
+MAX_DIM = 299
+
+
+def under_max(image):
+    if image.mode != 'RGB':
+        image = image.convert("RGB")
+
+    shape = np.array(image.size, dtype=np.float)
+    long_dim = max(shape)
+    scale = MAX_DIM / long_dim
+
+    new_shape = (shape * scale).astype(int)
+    # force shape 299, 224
+    new_shape = (299, 224)
+    image = image.resize(new_shape)
+
+    return image
+
+
+ego_transform = tv.transforms.Compose([
+    tv.transforms.Lambda(under_max),
+    tv.transforms.ToTensor(),
+    tv.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+])
 
 
 def get_image(path=None):
@@ -26,26 +57,8 @@ def get_image(path=None):
     print(img)
     return img
 
-MAX_DIM = 299
 
-
-def under_max(image):
-    if image.mode != 'RGB':
-        image = image.convert("RGB")
-
-    shape = np.array(image.size, dtype=np.float)
-    long_dim = max(shape)
-    scale = MAX_DIM / long_dim
-
-    new_shape = (shape * scale).astype(int)
-    # force shape 224, 224
-    new_shape = (224, 224)
-    image = image.resize(new_shape)
-
-    return image
-
-
-def create_caption_and_mask(start_t, max_length):
+def create_caption_and_mask_np(start_t, max_length):
     caption_template = np.zeros((1, max_length), dtype=np.long)
     mask_template = np.ones((1, max_length), dtype=np.bool)
 
@@ -55,10 +68,18 @@ def create_caption_and_mask(start_t, max_length):
     return caption_template, mask_template
 
 
-def main():
-    ego_model = "./BaseFormer.onnx"
+def to_numpy(tensor):
+    return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
 
-    sample_path = "./Qualitative_samples/origin/fjDvKHkmxs0_119_126.avi00001.jpg"
+
+def main():
+    ego_model = "./EgoFormer6.onnx"
+
+    sample_path = "./Qualitative_samples/origin/0f4e630b-e834-4ff4-9418-ccfdbdc4ee37_small.jpg"
+
+    # ONNX checker
+    onnx_model = onnx.load(ego_model)
+    onnx.checker.check_model(onnx_model)
 
     sess = rt.InferenceSession(ego_model, None)
 
@@ -74,24 +95,48 @@ def main():
     start_token = tokenizer.convert_tokens_to_ids(tokenizer._cls_token)
 
     # Load skeleton caption
-    cap, cap_mask = create_caption_and_mask(start_token, 128)
+    cap, cap_mask = create_caption_and_mask_np(start_token, 128)
+    print(cap.shape, cap_mask.shape)
 
     # Input formatting
     x = list()
     #x.append(np.expand_dims(np.random.rand(3, 224, 224).astype(np.float32), axis=0))
-    x.append(np.expand_dims(get_image(sample_path), axis=0))
+    # Get Image input
+    image = Image.open(sample_path)
+    image = ImageOps.exif_transpose(image)
+    w, h = image.size
+    print("PIL Image width: {}, height: {}".format(w, h))
+    sample = coco.val_transform(image)
+    sample = sample.unsqueeze(0)
+    #sample = ego_transform(image)
+    print(sample.shape)
+
+    #np_sample = np.asarray(sample.detach(), dtype=np.float32)
+    #print(np_sample.shape)
+    #x.append(np.expand_dims(np_sample, axis=0))
+    x.append(to_numpy(sample).astype(np.float32))
     x.append(cap)
     x.append(cap_mask)
 
     for i in range(128 - 1):
-        print(x)
+        #print(x)
         x = x if isinstance(x, list) else [x]
-        inputs = dict([(item.name, x[n]) for n, item in enumerate(sess.get_inputs())])
+        inputs = dict([(item.name, x[idx]) for idx, item in enumerate(sess.get_inputs())])
+
+        '''
+        for idx, item in enumerate(sess.get_inputs()):
+            print("Input %d: %s" % (idx, item.name))
+        for idx, item in enumerate(sess.get_outputs()):
+            print("Output %d: %s" % (idx, item.name))
+        '''
+        print(inputs)
 
         start_t = time.time()
         pred = sess.run([label_name], inputs)
+        #pred = sess.run(None, inputs)
         elapsed_t = time.time() - start_t
         print("Word %d onnx sess time = %.04f seconds" % (i, elapsed_t))
+        print(pred[0].shape)
 
         prediction = pred[0][:, i, :]
         predicted_id = np.argmax(prediction, axis=-1)
