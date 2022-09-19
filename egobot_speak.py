@@ -78,6 +78,7 @@ def infer(args, config, model, feature_extractor, log="/home/nvidia/caps.json"):
     print("Sentence inference time = %.5fs" % elapsed_t)
 
     result = tokenizer.decode(output[0].tolist(), skip_special_tokens=True)
+    print('\n' + result.capitalize() + '\n')
     
     if os.path.isfile(log) and os.access(log, os.R_OK):
         # checks if file exists
@@ -119,11 +120,12 @@ if __name__ == "__main__":
         raise("model not supported!")
         exit()
     
+    root_dir = os.path.dirname(os.path.abspath(__file__))
     if args.model == "baseline":
-        checkpoint_path = "Baseline2-best_epoch32_loss10.pth"
+        checkpoint_path = join(root_dir, "Baseline2-best_epoch32_loss10.pth")
         model, _ = caption.build_model(conf)
     elif args.model == "egoformer":
-        checkpoint_path = "EgoFormer3-equalloss-best_epoch33_loss10.pth"
+        checkpoint_path = join(root_dir, "EgoFormer3-equalloss-best_epoch33_loss10.pth")
         model, _ = caption.build_model_egovit(conf)
     print("Loading Checkpoint...")
     checkpoint_tmp = torch.load(checkpoint_path, map_location='cpu')
@@ -136,7 +138,7 @@ if __name__ == "__main__":
     start_token = tokenizer.convert_tokens_to_ids(tokenizer._cls_token)
     end_token = tokenizer.convert_tokens_to_ids(tokenizer._sep_token)
     
-    root_dir = os.path.dirname(os.path.abspath(__file__))
+    
     if os.path.exists(join(root_dir, 'datasets', "vit_classify-feature_extractor")):
         feature_extractor = ViTFeatureExtractor.from_pretrained(join(root_dir, 'datasets', "vit_classify-feature_extractor"))
     else:
