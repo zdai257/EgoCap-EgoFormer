@@ -30,7 +30,7 @@ title = {EgoCap and EgoFormer: First-Person Image Captioning with Context Fusion
 
 * Python 3.7
 * Pytorch 1.7
-* torchvision 0.8.2
+* torchvision 0.8
 * transformers 4.12
 * pycocoevalcap
 * sklearn
@@ -43,20 +43,21 @@ This repository implements the training and evaluation of EgoFormer. It is modif
 
 Make sure you train the baseline with COCO first (configure **self.modality** as "image"). Then use the following command for context learning;
 
-```python
+```bash
 python3 vit_pretrain.py  # Pre-train ViT context encoder
 ```
 
 Finally use the following command to train EgoFormer with updated link to converged context ViT model;
 
-```python
+```bash
 python3 main.py
 ```
 
-At deployment stage, e.g., on an NVIDIA Jetson Nano, run inference model (e.g., in ONNX) by;
+At deployment stage, e.g., on an NVIDIA Jetson Nano (will need *soundcard*, *audio2numpy*, and *gtts* packages) run CSI camera, inference, and speaker by;
 
-```python
-python3 egobot_talk.py
+```bash
+python3 egobot_shoot.py &
+python3 egobot_speak.py
 ```
 
 ## Evaluation ##

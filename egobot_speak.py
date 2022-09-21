@@ -12,6 +12,13 @@ from datasets import coco
 from PIL import Image, ImageOps
 import json
 from threading import Timer
+from gtts import gTTS
+import soundcard as sc
+import audio2numpy
+from collections import OrderedDict
+
+
+log="/home/nvidia/caps.json"
 
 
 class RepeatTimer(Timer):  
@@ -21,7 +28,26 @@ class RepeatTimer(Timer):
             print(' ')
 
 
-def infer(args, config, model, feature_extractor, log="/home/nvidia/caps.json"):
+def speak():
+    try:
+        with open(log, 'r') as f:
+            caps_dict = json.load(f)
+        my_caption = caps_dict[sorted(caps_dict.keys(), key=lambda x: int(x.split('.')[0].split('-')[-1]))[-1]]
+        print("About to speak: ", my_caption)
+
+        myobj = gTTS(text=my_caption, lang='en', slow=False)
+        myobj.save('/home/nvidia/tmp.mp3')
+        
+        # Find speaker
+        my_speaker = sc.get_speaker('Audio Adapter (Unitek Y-247A) Analogue Stereo')
+        # Load mp3 to np
+        sd, sr = audio2numpy.audio_from_file('/home/nvidia/tmp.mp3')
+        my_speaker.play(sd, samplerate=sr)
+    except:
+        raise("Error opening logged captions!")
+
+
+def infer(args, config, model, feature_extractor):
     #time.sleep(1)
     sorted_frames = sorted(os.listdir(args.path), key=lambda x: int(x.split('.')[0].split('-')[-1]))
     sample_frame = sorted_frames[-1]
@@ -146,11 +172,17 @@ if __name__ == "__main__":
         feature_extractor.save_pretrained(join(root_dir, 'datasets', "vit_classify-feature_extractor"))
     
     
+    ## Speaker timer
+    timer2 = RepeatTimer(10, speak, None)
+
     ##We are now creating a thread timer and controling it  
     timer = RepeatTimer(30, infer, [args, conf, model, feature_extractor])
         
+    timer2.start()
     timer.start()
+    
     time.sleep(300)
     print('Inference finishing.')
     timer.cancel()
+    timer2.cancel()
     
