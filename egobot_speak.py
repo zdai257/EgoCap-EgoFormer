@@ -19,6 +19,8 @@ from collections import OrderedDict
 
 
 log="/home/nvidia/caps.json"
+audio_file = "/home/nvidia/tmp.mp3"
+speaker_name = 'Audio Adapter (Unitek Y-247A) Analogue Stereo'
 
 
 class RepeatTimer(Timer):  
@@ -36,12 +38,12 @@ def speak():
         print("About to speak: ", my_caption)
 
         myobj = gTTS(text=my_caption, lang='en', slow=False)
-        myobj.save('/home/nvidia/tmp.mp3')
+        myobj.save(audio_file)
         
         # Find speaker
-        my_speaker = sc.get_speaker('Audio Adapter (Unitek Y-247A) Analogue Stereo')
+        my_speaker = sc.get_speaker(speaker_name)
         # Load mp3 to np
-        sd, sr = audio2numpy.audio_from_file('/home/nvidia/tmp.mp3')
+        sd, sr = audio2numpy.audio_from_file(audio_file)
         my_speaker.play(sd, samplerate=sr)
     except:
         raise("Error opening logged captions!")
