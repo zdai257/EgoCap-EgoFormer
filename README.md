@@ -15,13 +15,13 @@ EgoFormer is a two-stream transformer based deep neural network utilizing visual
 Please cite our paper as belew;
 
 ```
-@inproceedings{egocap2022,
+@inproceedings{dai_egocap2022,
 author = {Dai, Zhuangzhuang and Tran, Vu and Markham, Andrew and Trigoni, Niki and Rahman, M Arif and Wijayasingha, L. N. S. and Stankovic, John and Li, Chen},
 year = {2022},
 month = {},
 pages = {},
-booktitle={Proceedings of the British Machine Vision Conference (BMVC)},
-publisher={BMVA Press},
+booktitle={arXiv},
+publisher={arXiv},
 title = {EgoCap and EgoFormer: First-Person Image Captioning with Context Fusion}
 }
 ```
@@ -37,7 +37,7 @@ title = {EgoCap and EgoFormer: First-Person Image Captioning with Context Fusion
 
 Microsoft [COCO-2017](http://cocodataset.org/#download) dataset and EgoCap dataset are required. After acquiring these datasets locally, specify source directory links, training settings, and hyperparameters in *configuration.py*.
 
-## Usage ##
+## Training ##
 
 This repository implements the training and evaluation of EgoFormer. It is modified based on repository [CATR](https://github.com/saahiluppal/catr).
 
@@ -52,6 +52,8 @@ Finally use the following command to train EgoFormer with updated link to conver
 ```bash
 python3 main.py
 ```
+
+## Deployment on Jetson Nano ##
 
 At deployment stage, e.g., on an NVIDIA Jetson Nano (will need *soundcard*, *audio2numpy*, and *gtts* packages) run CSI camera, inference, and speaker by;
 
