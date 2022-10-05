@@ -144,28 +144,32 @@ def predict_qualitative(config, sample_path, tags, checkpoint_path=None, map_loc
         cap_dict = {}
 
         for idx, s_path in enumerate(sample_path):
-            # Load Image
-            image = Image.open(s_path)
-            # Transpose with respect to EXIF data
-            image = ImageOps.exif_transpose(image)
-            w, h = image.size
-            print("PIL Image width: {}, height: {}".format(w, h))
-            sample = coco.val_transform(image)
-            sample = sample.unsqueeze(0)
+            try:
+                # Load Image
+                image = Image.open(s_path)
+                # Transpose with respect to EXIF data
+                image = ImageOps.exif_transpose(image)
+                w, h = image.size
+                print("PIL Image width: {}, height: {}".format(w, h))
+                sample = coco.val_transform(image)
+                sample = sample.unsqueeze(0)
 
-            # Load skeleton caption
-            cap, cap_mask = create_caption_and_mask(start_token, config.max_position_embeddings)
+                # Load skeleton caption
+                cap, cap_mask = create_caption_and_mask(start_token, config.max_position_embeddings)
 
-            # Context ViT input
-            inputs = feature_extractor(image, return_tensors="pt")
-            img_tensor = inputs['pixel_values'].squeeze(1).to(device)
+                # Context ViT input
+                inputs = feature_extractor(image, return_tensors="pt")
+                img_tensor = inputs['pixel_values'].squeeze(1).to(device)
 
-            output, outputs = evaluate(sample, cap, cap_mask, img_tensor)
+                output, outputs = evaluate(sample, cap, cap_mask, img_tensor)
 
-            result = tokenizer.decode(output[0].tolist(), skip_special_tokens=True)
-            print('\n' + result.capitalize() + '\n')
-            sample_dict = {s_path.split('/')[-1]: [result]}
-            cap_dict.update(sample_dict)
+                result = tokenizer.decode(output[0].tolist(), skip_special_tokens=True)
+                print('\n' + result.capitalize() + '\n')
+                sample_dict = {s_path.split('/')[-1]: [result]}
+                cap_dict.update(sample_dict)
+
+            except ValueError:
+                pass
 
     else:
         raise TypeError("Sample_path invalid!")
