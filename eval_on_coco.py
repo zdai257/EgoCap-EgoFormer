@@ -39,7 +39,7 @@ def calc_scores(ref, hypo):
 
 
 # Specify COCO path
-coco_dir = '/Users/zhuangzhuangdai/repos/EgoTransformer/images'
+coco_dir = '/mnt/datasets/COCO/'  #'/Users/zhuangzhuangdai/repos/EgoTransformer/images'
 coco_filename = 'captions_val2017.json'
 
 # Load annotations
@@ -92,8 +92,18 @@ if __name__ == "__main__":
     config_ego = ConfigEgo()
 
     # Model path
-    EgoCO_base = '/Users/zhuangzhuangdai/repos/EgoTransformer/checkpoint_cl.pth'
-    EgoCO_blind = '/Users/zhuangzhuangdai/repos/EgoTransformer/EgoCO/EgoCO_blind-best_epoch14_loss21.pth'
+    EgoCO_base = '/home/zdai/repos/EgoCap-EgoFormer/checkpoint_cl.pth'  #'/Users/zhuangzhuangdai/repos/EgoTransformer/checkpoint_cl.pth'
+    EgoCO_blind = '/mnt/datasets/COCO/epoch_checks/EgoCO_blind-best_epoch14_loss21.pth'  #'/Users/zhuangzhuangdai/repos/EgoTransformer/EgoCO/EgoCO_blind-best_epoch14_loss21.pth'
     EgoCO_raw = None
 
-    tuples_base = Loop_quantitative_eval(config_t, EgoCO_base, ana)
+    tuples_base = Loop_quantitative_eval(config_t, EgoCO_base, ana, coco_dir_path=coco_dir)
+    print(tuples_base[2])
+
+    dict_results = {
+        'metrics': tuples_base[2],
+        'hypos': tuples_base[0],
+        'refs': tuples_base[1]
+    }
+
+    with open(join('EgoCO_base' + '-COCOeval.json'), 'w', encoding='utf-8') as f:
+        json.dump(dict_results, f, ensure_ascii=False, indent=4)
