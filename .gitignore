@@ -148,3 +148,4 @@ WordEmbeddings/
 .DS_Store
 vit*/
 *.onnx
+*.json

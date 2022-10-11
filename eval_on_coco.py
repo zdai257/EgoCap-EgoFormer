@@ -56,7 +56,7 @@ def _process(image_id):
     return val + '.jpg'
 
 
-def Loop_quantitative_eval(config, checkpoint, annotations, split_lst=['val2017'],
+def Loop_quantitative_eval(config, checkpoint, annotation, split_lst=['val2017'],
                            coco_dir_path='/Users/zhuangzhuangdai/repos/EgoTransformer/images'):
     hypo = {}
     refs = {}
@@ -64,22 +64,34 @@ def Loop_quantitative_eval(config, checkpoint, annotations, split_lst=['val2017'
 
     # Loop through validation dir(s)
     for split in split_lst:
-        for idx, cap in enumerate(annotations):
+        for idx, cap in enumerate(annotation):
             if _process(cap['image_id']) in os.listdir(join(coco_dir_path, split)):
                 sample_name = _process(cap['image_id'])
                 sample_path = join(coco_dir_path, split, sample_name)
 
                 # Add coco abs sample_path to list()
                 sample_path_lst.append(sample_path)
+
                 # Add coco captions (all 5)
-                ref = {sample_name: cap['caption']}
+                ref_lst = []
+                for item in annotation:
+                    if item['image_id'] == cap['image_id']:
+                        ref_lst.append(item['caption'])
+                ref = {sample_name: ref_lst}
                 refs.update(ref)
-    print("Done sorting refs, total testing samples = ", len(refs))
+
+    print("Before set() redundant removal, testing samples = ", len(sample_path_lst))
+    # Remove redundant images
+    sample_path_lst = list(set(sample_path_lst))
+    print("Done sorting samples, total testing samples = ", len(sample_path_lst))
 
     # Inference with lists of sample_path
     pred_dict = predict_qualitative(config, sample_path_lst, tags=None, checkpoint_path=checkpoint)
     # Note: pred_dict is of dict: {'<image_name.jpg>': ["cap1.", "cap2." ...], ...}
     hypo.update(pred_dict)
+
+    # Remove illegal samples based on {hypo}
+    refs = {key: refs[key] for key in list(hypo.keys())}
 
     # Compute Metrics!
     metrics = calc_scores(refs, hypo)
