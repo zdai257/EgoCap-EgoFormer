@@ -10,7 +10,7 @@ The EgoCap dataset can be downloaded from *public drive* if you contact z.dai1@a
 
 ## EgoFormer ##
 
-EgoFormer is a two-stream transformer based deep neural network utilizing visual-contextual attention for image caption generation in 1st-person narrative. EgoFormer accomplishes accurate and human-alike scene understanding with the aid of context encoding. You can run EgoFormer on a Jetson Nano device to let robot explore the uncharted on your behalf. A video demo can be seen **here**. A blog can be found **here**.
+EgoFormer is a two-stream transformer based deep neural network utilizing visual-contextual attention for image caption generation in a 1st-person narrative. EgoFormer accomplishes accurate and human-alike scene understanding with the aid of context encoding. The context encoder is a pre-trained ViT encoder, which is subsequently fine-tuned on EgoCap context classfication, namely *where*, *when*, and *whom*.
 
 Please cite our paper as belew;
 
@@ -53,9 +53,15 @@ Finally use the following command to train EgoFormer with updated link to conver
 python3 main.py
 ```
 
-## Deployment on Jetson Nano ##
+## Deployment on NVIDIA Jetson Nano ##
 
-At deployment stage, e.g., on an NVIDIA Jetson Nano (will need *soundcard*, *audio2numpy*, and *gtts* packages) run CSI camera, inference, and speaker by;
+<p align="center">
+  <img src="Qualitative_samples/EgoBotSpeaker.png" />
+</p>
+
+You can run EgoFormer on an embedded device to let robot explain the scene for you. We implemented an EgoBot on NVIDIA Jetson Nano with a CSI camera, a speaker, Wi-Fi dongle, and a power bank. Please check out our [Video Demo](https://youtu.be/tvPZzB8Ufz8).
+
+To deploy the EgoFormer inference engine onto Jetson Nano, you will need *soundcard*, *audio2numpy*, and *gtts* packages to run the camera driver, inference engine, and the speaker. To let EgoBot speak out loud, run
 
 ```bash
 python3 egobot_shoot.py &
