@@ -31,8 +31,9 @@ title = {EgoCap and EgoFormer: First-Person Image Captioning with Context Fusion
 * Python 3.7
 * Pytorch 1.7
 * torchvision 0.8
-* transformers 4.12
+* transformers
 * pycocoevalcap
+* aac-metrics
 * sklearn
 
 Microsoft [COCO-2017](http://cocodataset.org/#download) dataset and EgoCap dataset are required. After acquiring these datasets locally, specify source directory links, training settings, and hyperparameters in *configuration.py*.
