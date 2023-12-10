@@ -11,16 +11,16 @@ class Config(object):
         self.weight_decay = 1e-4
 
         # Backbone
-        self.backbone = 'resnet50'
+        self.backbone = 'resnet18'
         self.position_embedding = 'sine'
         self.dilation = True
 
         # Basic
-        self.device = 'cuda:0'
+        self.device = 'cuda:1'
         self.seed = 42
         self.batch_size = 32
         self.num_workers = 8
-        self.checkpoint = './checkpoint-small.pth'
+        self.checkpoint = './checkpoint-tiny.pth'
         self.clip_max_norm = 0.1
 
         # Transformer
