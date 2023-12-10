@@ -106,7 +106,7 @@ def main(config):
 
     min_loss_val = 100
     # TODO: update saved checkpoints path
-    save_dir = '/mnt/datasets/COCO/epoch_checks'
+    save_dir = '/users/d/daiz1/epoch_checks-small'
 
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
