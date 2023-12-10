@@ -199,5 +199,5 @@ def main(config):
 
 
 if __name__ == "__main__":
-    config = ConfigEgo()
+    config = Config()
     main(config)

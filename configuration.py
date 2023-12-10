@@ -11,16 +11,16 @@ class Config(object):
         self.weight_decay = 1e-4
 
         # Backbone
-        self.backbone = 'resnet101'
+        self.backbone = 'resnet50'
         self.position_embedding = 'sine'
         self.dilation = True
 
         # Basic
-        self.device = 'cuda'
+        self.device = 'cuda:0'
         self.seed = 42
         self.batch_size = 32
         self.num_workers = 8
-        self.checkpoint = './checkpoint.pth'
+        self.checkpoint = './checkpoint-small.pth'
         self.clip_max_norm = 0.1
 
         # Transformer
@@ -38,7 +38,7 @@ class Config(object):
         self.pre_norm = True
 
         # Dataset
-        self.dir = '/mnt/datasets/COCO'  #TODO: specify COCO dir
+        self.dir = '/users/d/daiz1/COCO'  #TODO: specify COCO dir
         self.limit = -1
 
         # Dataset type
