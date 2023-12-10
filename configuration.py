@@ -3,6 +3,7 @@ class Config(object):
         # Learning Rates
         self.lr_backbone = 1e-5
         self.lr = 1e-4
+        self.lr_ctx_vit = 0.
 
         # Epochs
         self.epochs = 30
@@ -43,6 +44,9 @@ class Config(object):
 
         # Dataset type
         self.modality = 'image'
+        self.IsFinetune = False
+        self.IsBlindEgoco = True
+        self.pretrain_ctx_vit = './ctx_vit_raw.pth'
 
 
 class ConfigEgo(object):
@@ -61,7 +65,7 @@ class ConfigEgo(object):
         self.warmup_steps = 24
 
         # Backbone
-        self.backbone = 'resnet101'
+        self.backbone = 'resnet50'
         self.position_embedding = 'sine'
         self.dilation = True
 
@@ -70,7 +74,7 @@ class ConfigEgo(object):
         self.seed = 42
         self.batch_size = 8
         self.num_workers = 8
-        self.checkpoint = './EgoCO_raw.pth'
+        self.checkpoint = './EgoCap_egoformer-small.pth'
         self.clip_max_norm = 0.1
 
         # Transformer
@@ -88,15 +92,15 @@ class ConfigEgo(object):
         self.pre_norm = True
 
         # Dataset
-        self.dir = '/mnt/datasets/COCO'  #TODO: specify COCO dir
+        self.dir = '/users/d/daiz1/COCO'  #TODO: specify COCO dir
         self.limit = -1
 
         # TYPE of dataset
         self.modality = 'ego'  # 'ego' for EgoFormer; 'image' for baseline Transformer
         self.IsFinetune = True
-        self.pretrain_checkpoint = "./checkpoint_cl.pth"  #TODO: specify pretrained baseline Transformer path
+        self.pretrain_checkpoint = "./checkpoint_best-small.pth"  #TODO: specify pretrained baseline Transformer path
         # Ego dataset
-        self.egocap_data_dir = "/home/zdai/repos/EgoCapSurvey"  #TODO: specify EgoCap path
+        self.egocap_data_dir = "/users/d/daiz1/repos/EgoCapSurvey"  #TODO: specify EgoCap path
         self.egocap_ana_filename = "EgoCap_annatations_ref.json"
         self.train_splits = [4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
         self.val_splits = [1, 2]
