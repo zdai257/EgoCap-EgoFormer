@@ -1,4 +1,4 @@
-class Config(object):o
+class Config(object):
     def __init__(self):
         # Learning Rates
         self.lr_backbone = 3e-5
@@ -45,7 +45,6 @@ class Config(object):o
         self.modality = 'image'
         self.IsFinetune = False
         self.IsBlindEgoco = True
-        # TODO: specify pretrained context ViT classifier path
         self.pretrain_ctx_vit = "./ctx_vit_raw0.pth"
 
 
