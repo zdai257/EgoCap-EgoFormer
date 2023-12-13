@@ -3,6 +3,7 @@ class Config(object):
         # Learning Rates
         self.lr_backbone = 3e-5
         self.lr = 1e-4
+        self.lr_ctx_vit = 0.
 
         # Epochs
         self.epochs = 30
@@ -13,7 +14,7 @@ class Config(object):
         # Backbone
         self.backbone = 'resnet18'
         self.position_embedding = 'sine'
-        self.dilation = True
+        self.dilation = False
 
         # Basic
         self.device = 'cuda:1'
