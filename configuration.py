@@ -21,7 +21,7 @@ class Config(object):
         self.seed = 42
         self.batch_size = 32
         self.num_workers = 8
-        self.checkpoint = './checkpoint-tiny.pth'
+        self.checkpoint = 'checkpoint-tiny.pth'
         self.clip_max_norm = 0.1
 
         # Transformer
@@ -59,22 +59,22 @@ class ConfigEgo(object):
         # Epochs
         self.epochs = 80
         self.lr_drop = 20
-        self.start_epoch = 0  #12  # Finetune starting from 11 + 1
+        self.start_epoch = 10  #12  # Finetune starting from 11 + 1
         self.weight_decay = 1e-4
         # Warm Up: steps / (batch * epochs)
         self.warmup_steps = 24
 
         # Backbone
-        self.backbone = 'resnet101'
+        self.backbone = 'resnet18'
         self.position_embedding = 'sine'
-        self.dilation = True
+        self.dilation = False
 
         # Basic
-        self.device = 'cuda:0'
+        self.device = 'cuda:1'
         self.seed = 42
         self.batch_size = 8
         self.num_workers = 8
-        self.checkpoint = './EgoCO_raw.pth'
+        self.checkpoint = '/users/d/daiz1/epoch_checks-tiny/checkpoint-tiny-best_epoch9_loss22.pth'
         self.clip_max_norm = 0.1
 
         # Transformer
@@ -92,15 +92,15 @@ class ConfigEgo(object):
         self.pre_norm = True
 
         # Dataset
-        self.dir = '/mnt/datasets/COCO'  #TODO: specify COCO dir
+        self.dir = '/users/d/daiz1/COCO'  #TODO: specify COCO dir
         self.limit = -1
 
         # TYPE of dataset
         self.modality = 'ego'  # 'ego' for EgoFormer; 'image' for baseline Transformer
         self.IsFinetune = True
-        self.pretrain_checkpoint = "./checkpoint_cl.pth"  #TODO: specify pretrained baseline Transformer path
+        self.pretrain_checkpoint = "/users/d/daiz1/epoch_checks/checkpoint-tiny-best_epoch9_loss22.pth"  #TODO: specify pretrained baseline Transformer path
         # Ego dataset
-        self.egocap_data_dir = "/home/zdai/repos/EgoCapSurvey"  #TODO: specify EgoCap path
+        self.egocap_data_dir = "/users/d/daiz1/repos/EgoCapSurvey"  #TODO: specify EgoCap path
         self.egocap_ana_filename = "EgoCap_annatations_ref.json"
         self.train_splits = [4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
         self.val_splits = [1, 2]
@@ -111,7 +111,7 @@ class ConfigEgo(object):
         self.vit_body_lr = 1e-5
         self.vit_weight_decay = 1e-3
         self.vit_weights = (0.9, 0.69, 0.49)
-        self.IsBlindEgoco = True
+        self.IsBlindEgoco = False
         # TODO: specify pretrained context ViT classifier path
         self.pretrain_ctx_vit = "./ctx_vit_raw.pth"
 

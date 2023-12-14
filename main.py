@@ -106,7 +106,7 @@ def main(config):
 
     min_loss_val = 100
     # TODO: update saved checkpoints path
-    save_dir = '/users/d/daiz1/epoch_checks-tiny'
+    save_dir = '/users/d/daiz1/EgoFormer-tiny'
 
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
@@ -199,5 +199,5 @@ def main(config):
 
 
 if __name__ == "__main__":
-    config = Config()
+    config = ConfigEgo()
     main(config)
