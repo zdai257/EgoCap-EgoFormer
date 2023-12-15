@@ -114,8 +114,8 @@ if __name__ == "__main__":
 
     baseline = 'EgoFormer/Baseline2-best_epoch32_loss10.pth'  # '13 - finetune-epoch29_loss15.pth'
     egotrans = 'EgoFormer/EgoFormer3-equalloss-best_epoch33_loss10.pth'
-    small = ''
-    tiny = ''
+    small = 'EgoFormer/EgoFormer-small-best_epoch22_loss13.pth'
+    tiny = 'EgoFormer/EgoFormer-tiny-best_epoch25_loss13.pth'
 
     trans_concat = '../EgoTransformer/EgoFormer/EgoFormerConcat-smallLR-best_epoch19_loss10.pth'
     trans_gatedinfo = 'EgoFormer/GatedViT_smallLR-best_epoch19_loss10.pth'
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     egotrans_blind = 'EgoFormer/EgoFormer-BlindContext-best_epoch21_loss10.pth'
 
     # testing: Specify MODEL
-    tuples0 = Loop_quantitative_eval(config_ego, trans_concat, ana, eval_split)
+    tuples0 = Loop_quantitative_eval(config_ego, small, ana, eval_split)
 
     dict_results = {
         #'metrics': tuples0[2],

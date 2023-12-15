@@ -61,7 +61,7 @@ class ConfigEgo(object):
         self.warmup_steps = 24
 
         # Backbone
-        self.backbone = 'resnet101'
+        self.backbone = 'resnet50'  # 'resnet101' 'resnet50' 'resnet18'
         self.position_embedding = 'sine'
         self.dilation = True
 
