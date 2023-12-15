@@ -59,7 +59,7 @@ class ConfigEgo(object):
         # Epochs
         self.epochs = 80
         self.lr_drop = 20
-        self.start_epoch = 0  #12  # Finetune starting from 11 + 1
+        self.start_epoch = 8  #12  # Finetune starting from 11 + 1
         self.weight_decay = 1e-4
         # Warm Up: steps / (batch * epochs)
         self.warmup_steps = 24
@@ -74,7 +74,7 @@ class ConfigEgo(object):
         self.seed = 42
         self.batch_size = 8
         self.num_workers = 8
-        self.checkpoint = './EgoCap_egoformer-small.pth'
+        self.checkpoint = '/users/d/daiz1/EgoFormer-small.pth'
         self.clip_max_norm = 0.1
 
         # Transformer
@@ -98,7 +98,7 @@ class ConfigEgo(object):
         # TYPE of dataset
         self.modality = 'ego'  # 'ego' for EgoFormer; 'image' for baseline Transformer
         self.IsFinetune = True
-        self.pretrain_checkpoint = "./checkpoint_best-small.pth"  #TODO: specify pretrained baseline Transformer path
+        self.pretrain_checkpoint = "/users/d/daiz1/epoch_checks-small/checkpoint-small-best_epoch7_loss21.pth"  #TODO: specify pretrained baseline Transformer path
         # Ego dataset
         self.egocap_data_dir = "/users/d/daiz1/repos/EgoCapSurvey"  #TODO: specify EgoCap path
         self.egocap_ana_filename = "EgoCap_annatations_ref.json"
@@ -111,7 +111,7 @@ class ConfigEgo(object):
         self.vit_body_lr = 1e-5
         self.vit_weight_decay = 1e-3
         self.vit_weights = (0.9, 0.69, 0.49)
-        self.IsBlindEgoco = True
+        self.IsBlindEgoco = False
         # TODO: specify pretrained context ViT classifier path
         self.pretrain_ctx_vit = "./ctx_vit_raw.pth"
 
