@@ -6,7 +6,7 @@ EgoCap and EgoFormer: First-Person Image Captioning
 EgoCap is a first sizable dataset that supports end-to-end egocentric image captioning. It contain 2.1K egocentric images, over 10K captions, and 6.3K contextual
 label.
 
-The EgoCap dataset can be downloaded from *public drive* if you contact z.dai1@aston.ac.uk for access. Please state your name, affiliation, and purpose of use in the email.
+The EgoCap dataset can be downloaded [HERE](https://drive.google.com/drive/folders/10u8kBlrqi9sFiXZrouP6FChypen4dcFz?usp=drive_link). We also provide CLIP visual and textual features extracted with [OpenAI-CLIP-Feature](https://github.com/jianjieluo/OpenAI-CLIP-Feature?tab=readme-ov-file). If you have questions or notice any issues, please contact z.dai1@aston.ac.uk.
 
 ## EgoFormer ##
 
