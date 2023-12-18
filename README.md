@@ -81,8 +81,21 @@ Some EgoFormer caption results in comparison to baseline transformer are shown b
   <img src="Qualitative_samples/0f4e630b-e834-4ff4-9418-ccfdbdc4ee37_small.jpg" />
 </p>
 
+------
+
+### License
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+This repository is available under the MIT License. Contributions are not accepted. If you notice issues, feel free to raise them or email the authors.
+
+------
+
+
 ## Acknowledge ##
 
 We thank the support of the National Institute of Standards and Technology (NIST) in project: Pervasive, Accurate, and Reliable Location-based Services for Emergency Responders.
+
+Experiments were run on Aston EPS Machine Learning Server, funded by the EPSRC Core Equipment Fund, Grant EP/V036106/1.
 
 We thank Professor Bongjun Choi's team of Dongseo University for helping with data validation.
