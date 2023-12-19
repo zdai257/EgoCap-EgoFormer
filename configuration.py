@@ -61,7 +61,7 @@ class ConfigEgo(object):
         self.warmup_steps = 24
 
         # Backbone
-        self.backbone = 'resnet50'  # 'resnet101' 'resnet50' 'resnet18'
+        self.backbone = 'resnet101'  # 'resnet101' 'resnet50' 'resnet18'
         self.position_embedding = 'sine'
         self.dilation = True
 
@@ -96,7 +96,7 @@ class ConfigEgo(object):
         self.IsFinetune = True
         self.pretrain_checkpoint = "./checkpoint_cl.pth"  #TODO: specify pretrained baseline Transformer path
         # Ego dataset
-        self.egocap_data_dir = "/home/zdai/repos/EgoCapSurvey"  #TODO: specify EgoCap path
+        self.egocap_data_dir = "/Users/zhuangzhuangdai/repos/EgoCapSurvey"  #TODO: specify EgoCap path
         self.egocap_ana_filename = "EgoCap_annatations_ref.json"
         self.train_splits = [4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
         self.val_splits = [1, 2]
