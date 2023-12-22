@@ -107,7 +107,7 @@ class ConfigEgo(object):
         self.vit_body_lr = 1e-5
         self.vit_weight_decay = 1e-3
         self.vit_weights = (0.9, 0.69, 0.49)
-        self.IsBlindEgoco = True
+        self.IsBlindEgoco = False
         # TODO: specify pretrained context ViT classifier path
         self.pretrain_ctx_vit = "./ctx_vit_raw.pth"
 

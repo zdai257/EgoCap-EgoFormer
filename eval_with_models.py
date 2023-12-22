@@ -116,6 +116,8 @@ if __name__ == "__main__":
     egotrans = 'EgoFormer/EgoFormer3-equalloss-best_epoch33_loss10.pth'
     small = 'EgoFormer/EgoFormer-small-best_epoch22_loss13.pth'
     tiny = 'EgoFormer/EgoFormer-tiny-best_epoch25_loss13.pth'
+    egoformer_b32 = 'EgoFormer/EgoFormer-B32-best_epoch33_loss13.pth'
+    egoformer_b8 = 'EgoFormer/EgoFormer-B8-best_epoch25_loss13.pth'
 
     trans_concat = '../EgoTransformer/EgoFormer/EgoFormerConcat-smallLR-best_epoch19_loss10.pth'
     trans_gatedinfo = 'EgoFormer/GatedViT_smallLR-best_epoch19_loss10.pth'
@@ -128,7 +130,7 @@ if __name__ == "__main__":
     egotrans_blind = 'EgoFormer/EgoFormer-BlindContext-best_epoch21_loss10.pth'
 
     # testing: Specify MODEL
-    tuples0 = Loop_quantitative_eval(config_ego, small, ana, eval_split)
+    tuples0 = Loop_quantitative_eval(config_ego, egoformer_b8, ana, eval_split)
 
     dict_results = {
         #'metrics': tuples0[2],
@@ -137,5 +139,5 @@ if __name__ == "__main__":
     }
 
     # Specify NAME.json
-    with open(join('EgoCap_' + 'small' + '-eval.json'), 'w', encoding='utf-8') as f:
+    with open(join('EgoCap_' + 'egof-b8' + '-eval.json'), 'w', encoding='utf-8') as f:
         json.dump(dict_results, f, ensure_ascii=False, indent=4)
